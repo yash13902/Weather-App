@@ -20,9 +20,11 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
                 return result;
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(MainActivity.this , "Could not find weather", Toast.LENGTH_LONG);
+                Toast.makeText(MainActivity.this, "Could not find weather", Toast.LENGTH_LONG);
             }
-            return null;
+            return "0";
         }
         @Override
         protected void onPostExecute(String result) {
@@ -103,14 +105,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void findWeather(View view){
+    public void findWeather(View view) throws UnsupportedEncodingException {
 
         Log.i("cityname", cityName.getText().toString());
-        Weather task = new Weather();
-        task.execute("https://api.openweathermap.org/data/2.5/weather?q="+cityName.getText().toString()+"&appid=c6a892e69e83c17d872b1ac159c88cf8");
 
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(cityName.getWindowToken(),0);
-    }
 
+        String encodedCityName = URLEncoder.encode(cityName.getText().toString(), "UTF-8");
+        Weather task = new Weather();
+        task.execute("https://api.openweathermap.org/data/2.5/weather?q="+encodedCityName+"&appid=c6a892e69e83c17d872b1ac159c88cf8");
+
+    }
 }
